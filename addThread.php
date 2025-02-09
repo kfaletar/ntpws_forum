@@ -13,23 +13,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['thread_id'])) {
         $threadId = $_POST['thread_id'];
-        // Allow admins to update any thread
+
+        // Update existing thread
         $query = "UPDATE threads SET title = '$title' WHERE id = $threadId";
         mysqli_query($con, $query);
+        
+        // Redirect to the updated thread
+        header("Location: viewThread.php?thread_id=" . $threadId);
+        exit;
     } else {
+        // Insert new thread
         $query = "INSERT INTO threads (title, user_id) VALUES ('$title', $userId)";
         mysqli_query($con, $query);
+        
+        // Get the ID of the newly created thread
+        $newThreadId = mysqli_insert_id($con);
+        
+        // Redirect to the new thread
+        header("Location: viewThread.php?thread_id=" . $newThreadId);
+        exit;
     }
-
-    mysqli_close($con);
-    header("Location: adminDashboard.php"); // Redirect to admin dashboard after update
-    exit;
 } else {
     $threadId = $_GET['thread_id'] ?? null;
     $title = '';
 
     if ($threadId) {
-        // Fetch the thread title without checking user_id for admins
         $query = "SELECT title FROM threads WHERE id = $threadId";
         $result = mysqli_query($con, $query);
         if ($row = mysqli_fetch_assoc($result)) {
