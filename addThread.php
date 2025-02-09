@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['thread_id'])) {
         $threadId = $_POST['thread_id'];
-        // Allow admins to update any thread
+
         $query = "UPDATE threads SET title = '$title' WHERE id = $threadId";
         mysqli_query($con, $query);
     } else {
@@ -22,14 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     mysqli_close($con);
-    header("Location: adminDashboard.php"); // Redirect to admin dashboard after update
+
     exit;
 } else {
     $threadId = $_GET['thread_id'] ?? null;
     $title = '';
 
     if ($threadId) {
-        // Fetch the thread title without checking user_id for admins
+
         $query = "SELECT title FROM threads WHERE id = $threadId";
         $result = mysqli_query($con, $query);
         if ($row = mysqli_fetch_assoc($result)) {
